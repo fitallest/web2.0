@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fi.tallest - Thiết Kế Website & Ứng dụng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      
+      /* Consolidated Custom CSS */
+      
+      /* From style.css */
+      #success-message {
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: #28a745;
+          color: white;
+          padding: 15px 30px;
+          border-radius: 8px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+          z-index: 2000;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.5s ease-in-out, visibility 0.5s;
+      }
+      #success-message.show {
+          opacity: 1;
+          visibility: visible;
+      }
+      
+      /* From index.html inline styles */
+      @keyframes bounce-delay {
+          0%, 80%, 100% { transform: scale(0); }
+          40% { transform: scale(1.0); }
+      }
+      .ai-dots > div {
+          width: 12px; height: 12px; background-color: #6366f1; border-radius: 100%; display: inline-block;
+          animation: bounce-delay 1.4s infinite ease-in-out both;
+      }
+      .ai-dots > div:nth-child(2) { animation-delay: -0.32s; }
+      .ai-dots > div:nth-child(3) { animation-delay: -0.16s; }
+      .animate-gradient-bg {
+          background: linear-gradient(-45deg, #4f46e5, #7c3aed, #ec4899, #3b82f6);
+          background-size: 400% 400%;
+          animation: gradientBG 10s ease infinite;
+      }
+      @keyframes gradientBG {
+          0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+      }
+      @keyframes float {
+          0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); }
+      }
+      .animate-float { animation: float 3s ease-in-out infinite; }
+      .line-clamp-3 {
+          display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+      }
+
+      /* From page-baogia.css */
+      body { padding-bottom: 150px; }
+      .hidden-hosting-packages { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+      .hidden-hosting-packages.expanded { max-height: 3000px; }
+      #quote-details-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+      #quote-details-panel.expanded { max-height: 500px; }
+      #quote-summary-footer.panel-open #quote-toggle-icon { transform: rotate(180deg); }
+
+      /* From page-domain.css */
+      .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 80px 20px; text-align: center; border-bottom-left-radius: 50px; border-bottom-right-radius: 50px; position: relative; overflow: hidden; }
+      .hero-section h1 { font-size: 2.5rem; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+      
+      /* Domain Page Result Animation */
+      .result-item {
+          opacity: 0;
+          transform: translateY(15px);
+          transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+      }
+      .results-visible .result-item {
+          opacity: 1;
+          transform: translateY(0);
+      }
+
+      /* From page-hosting.css */
+      body.overview-is-open { overflow: hidden; }
+      .mind-map { display: flex; align-items: center; padding: 20px; }
+      .mind-map-root { display: flex; align-items: center; margin-right: 40px; position: relative; }
+      .mind-map-level { display: flex; flex-direction: column; position: relative; transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.4s ease-out; max-height: 2000px; opacity: 1; overflow: hidden; transform: translateX(0); }
+      .mind-map-root::after { content: ''; position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; height: 2px; background: #ccc; }
+      .mind-map-level.level-2::before { content: ''; position: absolute; left: -20px; top: 20px; bottom: 20px; width: 2px; background: #ccc; }
+      .mind-map-branch { display: flex; align-items: flex-start; margin-bottom: 15px; position: relative; }
+      .mind-map-branch::before { content: ''; position: absolute; left: -20px; top: 20px; width: 20px; height: 2px; background: #ccc; }
+      .mind-map-node-container { display: flex; align-items: center; margin-right: 40px; position: relative; white-space: nowrap; height: 40px; }
+      .mind-map-node-container::after { content: ''; position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 20px; height: 2px; background: #ccc; transition: all 0.4s ease-out; }
+      .mind-map-node-container.is-leaf::after, .mind-map-node-container.is-collapsed::after { display: none; }
+      .mind-map-level.collapsed { max-height: 0; opacity: 0; transform: translateX(-20px); }
+      .toggle.is-leaf { visibility: hidden; }
+      .toggle.is-collapsed { transform: rotate(-90deg); background-color: #6c757d; }
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^6.23.1",
+    "react/": "https://aistudiocdn.com/react@^18.3.1/",
+    "react": "https://aistudiocdn.com/react@^18.3.1",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^18.3.1/"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-50">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
